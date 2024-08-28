@@ -50,11 +50,12 @@ void rightBrace(tap_dance_state_t* state, void* user_data) {
 }
 
 enum preonic_layers {
-    _QWERTY, // 0
-    _GAMING, // 1
-    _LOWER,  // 2
-    _RAISE,  // 3
-    _ADJUST  // 4
+    _QWERTY,  // 0
+    _COLEMAK, // 1
+    _GAMING,  // 2
+    _LOWER,   // 3
+    _RAISE,   // 4
+    _ADJUST   // 5
 };
 
 enum preonic_keycodes { LOWER = SAFE_RANGE, RAISE, TAB_LEFT, TAB_RIGHT, TAB_CLOSE };
@@ -100,7 +101,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_DEL,
         MT(MOD_LCTL | MOD_LSFT | MOD_LALT | MOD_LGUI, KC_ESC), KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT,
         KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, MT(MOD_LSFT | MOD_RSFT, KC_ENT),
-        QK_LEAD, KC_LCTL, KC_LALT, KC_LGUI, LOWER, KC_SPC, KC_SPC, RAISE, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT),
+        QK_LEAD, KC_LCTL, KC_LALT, KC_LGUI, LOWER, KC_SPC, KC_SPC, RAISE, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT
+    ),
+
+    /* Colemak
+    * ,-----------------------------------------------------------------------------------.
+    * | Esc` |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
+    * |------+------+------+------+------+------+------+------+------+------+------+------|
+    * | Tab  |   Q  |   W  |   F  |   P  |   G  |   J  |   L  |   U  |   Y  |   ;  | Del  |
+    * |------+------+------+------+------+-------------+------+------+------+------+------|
+    * | Hyper|   A  |   R  |   S  |   T  |   D  |   H  |   N  |   E  |   I  |   O  |  "   |
+    * |------+------+------+------+------+------|------+------+------+------+------+------|
+    * | Shift|   Z  |   X  |   C  |   V  |   B  |   K  |   M  |   ,  |   .  |   /  |Enter |
+    * |------+------+------+------+------+------+------+------+------+------+------+------|
+    * |Leader| Ctrl | Alt  | GUI  |Lower |    Space    |Raise | Left | Down |  Up  |Right |
+    * `-----------------------------------------------------------------------------------'
+    */
+    [_COLEMAK] = LAYOUT_preonic_grid(
+    _______,  _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,
+    _______,  KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, _______,
+    _______,  KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_H,    KC_N,    KC_E,    KC_I,    KC_O,    _______,
+    _______, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, _______,
+    _______, _______, _______, _______, _______,   _______,  _______,  _______,   _______, _______, _______,   _______
+    ),
 
     /* Gaming
      * ,-----------------------------------------------------------------------------------.
@@ -120,7 +143,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_DEL,
         KC_P, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT,
         KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, MT(MOD_LSFT | MOD_RSFT, KC_ENT),
-        KC_LCTL, KC_LALT, KC_SCLN, KC_QUOT, LOWER, KC_SPC, KC_SPC, RAISE, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT),
+        KC_LCTL, KC_LALT, KC_SCLN, KC_QUOT, LOWER, KC_SPC, KC_SPC, RAISE, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT
+    ),
 
     /* Lower
      * ,-----------------------------------------------------------------------------------.
@@ -140,7 +164,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TILD, TAB_LEFT, TAB_CLOSE, TAB_RIGHT, KC_DLR, KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_DEL,
         KC_DEL, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE,
         _______, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, S(KC_NUHS), S(KC_NUBS), KC_HOME, KC_END, _______,
-         _______, _______, _______, KC_LGUI, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY),
+        _______, _______, _______, KC_LGUI, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
+    ),
 
     /* Raise
      * ,-----------------------------------------------------------------------------------.
@@ -160,27 +185,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_GRV, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_DEL,
     KC_DEL, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_MINS, KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS,
     _______, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_NUHS, KC_NUBS, KC_PGUP, KC_PGDN, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY),
+    _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
+),
 
     /* Adjust (Lower + Raise)
      * ,---------------------------------------------------------------------------------------------.
-     * |  F1  |  F2  |  F3  |  F4  |  F5  |  F6            |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |
-     * |------+------+------+------+------+----------------+------+------+------+------+------+------|
-     * |      | Reset| Debug|      |      |                |      |      |      |      |      |      |
-     * |------+------+------+------+------+----------------+------+------+------+------+------+------|
-     * |      |      |      |      |      |  TG(GAMING)    |      |      |      |      |      |      |
-     * |------+------+------+------+------+----------------+------+------+------+------+------+------|
-     * |      |      |      |      |      |                |      |      |      |      |      |      |
-     * |------+------+------+------+------+----------------+------+------+------+------+------+------|
-     * |      |      |      |      |      |                |      |      |      |      |      |      |
+     * |  F1  |  F2  |  F3  |  F4           |  F5  |  F6            |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |
+     * |------+------+------+---------------+------+----------------+------+------+------+------+------+------|
+     * |      | Reset| Debug|               |      |                |      |      |      |      |      |      |
+     * |------+------+------+---------------+------+----------------+------+------+------+------+------+------|
+     * |      |      |      |               |      |  TG(GAMING)    |      |      |      |      |      |      |
+     * |------+------+------+---------------+------+----------------+------+------+------+------+------+------|
+     * |      |      |      |  TG(_COLEMAK) |      |                |      |      |      |      |      |      |
+     * |------+------+------+---------------+------+----------------+------+------+------+------+------+------|
+     * |      |      |      |               |      |                |      |      |      |      |      |      |
      * `----------------------------------------------------------------------------------------------'
      */
     [_ADJUST] = LAYOUT_preonic_grid(
     KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12,
     _______, QK_BOOT, DB_TOGG, _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, TG(_GAMING), _______, _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______)
+    _______, _______, _______, TG(_COLEMAK), _______, _______, _______, _______, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+)
 
 };
 
