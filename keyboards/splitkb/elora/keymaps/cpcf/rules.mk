@@ -19,7 +19,8 @@
 ## Hardware features
 
 # OLED: optional, can be installed in socket
-OLED_ENABLE = yes          # Enable OLEDs, `yes` or `no`
+OLED_ENABLE = no          # Enable OLEDs, `yes` or `no`
+I2C_DRIVER_REQUIRED = yes # Enable I2C, needed for myriad`
 
 # Audio: optional, requires soldering
 # The Elora is equipped with a footprint
