@@ -38,6 +38,44 @@ enum layers {
 #define CTL_QUOT MT(MOD_RCTL, KC_QUOTE)
 #define ALT_ENT  MT(MOD_LALT, KC_ENT)
 
+enum custom_keycodes {
+    NO_SLEEP = SAFE_RANGE,  //custom macro key.  turns on screensaver mode
+    //other macros,
+    //...
+};
+
+bool stop_screensaver = false;     //screensaver mode status
+uint32_t last_activity_timer = 0;
+#define SCREENSAVE_DELAY 120000
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case NO_SLEEP:
+            if (record->event.pressed) {               //if NO_SLEEP is pressed
+                if (stop_screensaver) {
+                    stop_screensaver = false;
+                    rgb_matrix_toggle();
+                } else {
+                    stop_screensaver = true;               //turn on screensaver mode
+                    last_activity_timer = timer_read32();  //reset timer
+                    rgb_matrix_toggle();
+                }
+            }
+            break;
+        //other macros...
+    }
+    return true;
+}
+
+void matrix_scan_user(void) {
+    if (stop_screensaver) {                                             //if screensaver mode is active
+        if (timer_elapsed32(last_activity_timer) > SCREENSAVE_DELAY) {  //and no key has been pressed in more than SCREENSAVE_DELAY ms
+            tap_code16(KC_F13);                                         //  tap F13
+            last_activity_timer = timer_read32();                       //  reset last_activity_timer
+        }
+    }
+}
+
 // Note: LAlt/Enter (ALT_ENT) is not the same thing as the keyboard shortcut Alt+Enter.
 // The notation `mod/tap` denotes a key that activates the modifier `mod` when held down, and
 // produces the key `tap` when tapped (i.e. pressed and released).
@@ -235,7 +273,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |--------+------+------+------+------+------|      |------|  |------|      |------+------+------+------+------+--------|
  * |        |      |      |      |      |      |      |      |  |      |      | TOG  | SAI  | HUI  | VAI  | MOD  |        |
  * |--------+------+------+------+------+------+------+------|  |------|------+------+------+------+------+------+--------|
- * |        |      |      |Colmak|      |      |      |      |  |      |      |      | SAD  | HUD  | VAD  | RMOD |        |
+ * |NO_SLEEP|      |      |Colmak|      |      |      |      |  |      |      |      | SAD  | HUD  | VAD  | RMOD |        |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
  *                        |      |      |      |      |      |  |      |      |      |      |      |
  *                        |      |      |      |      |      |  |      |      |      |      |      |
@@ -246,13 +284,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------'      `------'                `---------------------------'      '------'
  */
     [_ADJUST] = LAYOUT_myr(
-      _______, _______, _______, _______, _______, _______,         _______, _______,          _______, _______, _______, _______,  _______, _______,
-      _______, QWERTY , _______, _______, _______, _______,         _______, _______,          _______, _______, _______, _______,  _______, _______,
-      _______, _______, _______, _______, _______, _______,         _______, _______,          RGB_TOG, RGB_SAI, RGB_HUI, RGB_VAI,  RGB_MOD, _______,
-      _______, _______, _______, COLEMAK, _______, _______,_______, _______, _______, _______, _______, RGB_SAD, RGB_HUD, RGB_VAD, RGB_RMOD, _______,
+      _______,  _______, _______, _______, _______, _______,         _______, _______,          _______, _______, _______, _______,  _______, _______,
+      _______,  QWERTY , _______, _______, _______, _______,         _______, _______,          _______, _______, _______, _______,  _______, _______,
+      _______,  _______, _______, _______, _______, _______,         _______, _______,          RGB_TOG, RGB_SAI, RGB_HUI, RGB_VAI,  RGB_MOD, _______,
+      NO_SLEEP, _______, _______, COLEMAK, _______, _______,_______, _______, _______, _______, _______, RGB_SAD, RGB_HUD, RGB_VAD, RGB_RMOD, _______,
                                  _______, _______, _______,_______, _______, _______, _______, _______, _______, _______,
 
-      _______, _______, _______, _______,          _______,                   _______, _______, _______, _______,          _______
+      _______,  _______, _______, _______,          _______,                   _______, _______, _______, _______,          _______
 
     ),
 
