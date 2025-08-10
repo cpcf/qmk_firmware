@@ -21,3 +21,7 @@
 
 // Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed
 #define DEBOUNCE 5
+
+#define HOLD_ON_OTHER_KEY_PRESS
+
+#define TAPPING_TOGGLE 2
